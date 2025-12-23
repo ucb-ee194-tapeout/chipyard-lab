@@ -31,7 +31,7 @@ bwrcix-{1,2,3}.eecs.berkeley.edu
 The BWRC network has ~250TB of networked storage via a [NFS](https://en.wikipedia.org/wiki/Network_File_System) based [Qumulo](https://qumulo.com/) server.
 
 The following locations are available:
-* Home Folder: /bwrcq/users & `/users/<your username>`
+* Home Folder: `/bwrcq/users` & `/users/<your username>`
   * **No large files should be stored here.** If you have configuration files for tmux, lightweight software you want to install (bash or zsh utilities, etc) they can be placed here, otherwise keep this area clean.
     * It is generally bad practice to store lots of large files in your home folder on any linux server, as your home folder is typically on a fast but low capacity boot drive. If you store large files there, it'll take up space and result in other users having very little/no space in their home folders, even for small files.
   * Networked drive, accessible from each machine on the BWRC network, including `rdsl` machines.
@@ -68,7 +68,7 @@ Advice:
 
 **Remote Desktop:**
 * You will need to remote desktop into BWRC machines at times to use a GUI (ex: opening the Innovus GUI to look at Place & Route results).
-* The high level overview of this is: Remote desktop into `bwrcrdsl-1`, then from `bwrcrdsl-1`, open a terminal, and SSH with X11 forwarding (`ssh -x`) into a compute server (ex: `bwrcix-1`). 
+* The high level overview of this is: Remote desktop into `bwrcrdsl-1`, then from `bwrcrdsl-1`, open a terminal, and SSH with X11 forwarding (`ssh -X`) into a compute server (ex: `bwrcix-1`). 
   * This means when you open up a GUI it'll get X11 forwarded onto `bwrcrdsl`. There is no lag because all servers are wired together in BWRC.
 * To set this up: Download [NoMachine](https://www.nomachine.com/), config as follows:
   * Address > Host: `bwrcrdsl-1.eecs.berkeley.edu` -- Only `bwrcrdsl-1` seems to support remote desktop.
