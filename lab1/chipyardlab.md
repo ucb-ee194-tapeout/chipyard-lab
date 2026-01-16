@@ -156,7 +156,7 @@ source /tools/C/ee194-sp26/bwrc-env.sh # this sources /tools/flexlm/flexlm.sh fo
 
 This script is responsible for setting up the tools and environment used in this lab (and more generally by the course). You should vim into the file to see what it does.
 
-**You will need to source this script in every new terminal & at the start of every work session. Or -- put this in your bashrc or zshrc**
+**You will need to source this script in every new terminal & at the start of every work session, or put this in your bashrc or zshrc**
 
 2) Clone the lab chipyard repo: [git@bwrcrepo.eecs.berkeley.edu:ee194-290c-sp26/chipyard-ee194.git](git@bwrcrepo.eecs.berkeley.edu:ee194-290c-sp26/chipyard-ee194.git).
 ```sh
@@ -261,7 +261,7 @@ source ./env.sh
 source /tools/C/ee194-sp26/bwrc-env.sh 
 ```
 
-You can write these into a shell script that you call upon first login to source everything you need in 1 command. Historically we've seen folks sometimes run into issues logging in over NoMachine when including these commands into their `.bashrc`, hence we recommend setting up a shell script you run manually instead of automatically running these during log in.
+You can write these into a shell script or bash alias that you call upon first login to source everything you need in 1 command. Historically we've seen folks sometimes run into issues logging in over NoMachine when including these commands into their `.bashrc`, hence we recommend setting up a shell script you run manually instead of automatically running these during log in.
 
 
 ## Chipyard Repo Files & Directories Overview
@@ -463,7 +463,7 @@ All of these modules are built as generators (a core driving point of using Chis
 
 
 
-### Exercise: Interpreting a Config (SUBMIT)
+### Exercise: Interpreting a Config
 Chipyard Configs describe what goes into our final ystem and what paramters our designs are elaborated with. You can find the configs in `$chipyard/generators/chipyard/src/main/scala/config`.
 
 Look at the configs located in `$chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala`, specifically `RocketConfig`
@@ -534,9 +534,9 @@ Inspect `MysteryRocketConfig` & answer the following questions. You should be ab
 
 **7. Does this config include a multiple-divide pipeline?**
 
-## Exercise: Compiling a Config (SUBMIT)
+## Exercise: Compiling a Config 
 
-Let's run some commands! **MAKE SURE YOU RUN THESE ON BWRC IX MACHINES**.
+Let's run some commands! **MAKE SURE YOU RUN THESE ON THE BWRCIX-\* MACHINES**.
 
 We'll be running the `CONFIG=RocketConfig` config (the `-j32` executes the run with more threads). This compiles the Chipyard configuration we saw above, converting Rocket Core's Chisel RTL into Verilog (Remember when we talked about how this happens in lab 0 part 0? Hint: FIRRTL)... Run:
 ```sh
@@ -578,17 +578,19 @@ The first part of the command (`CONFIG=RocketConfig`) will elaborate the design 
 
 This is done by converting the Chisel code, embedded in Scala, into a FIRRTL intermediate representation which is then run through the FIRRTL compiler to generate Verilog (for more details, see lab 0).
 
-Next it will run VCS (because we are in the `sims/vcs` folder) to build a simulator out of the generated Verilog that can run RISC-V binaries.
+Next it will run VCS (hence the `sims/vcs` folder) to build a simulator out of the generated Verilog that can run RISC-V binaries.
 
 The second part of the command (`BINARY=...`) will run the test specified by `BINARY` and output results as an `.out` file.
 
 This file will be emitted to the `$chipyard/sims/vcs/output/` directory.
 
-Many Chipyard Chisel-based design looks something like a Rocket core connected to some kind of "accelerator" (e.g. a DSP block like an FFT module).
+Many Chipyard/Chisel-based designs look like a Rocket core connected to some kind of "accelerator" (e.g. a DSP block like an FFT module).
 
-When building something like that, you would typically build your "accelerator" generator in Chisel. Then you can choose to either unit test using Chisel Test (this is the kind of test that we asked you to write in Lab 0). See [Chisel Testing](#chisel-testing) section on how to setup & run Chisel Tests.
+When building something like this, you would typically build your "accelerator" generator in Chisel. Then you can choose to unit test using Chisel Test or run integration tests. 
 
-Then (or skipping Chisel Tests): You can write integration tests (eg. a baremetal C program) which can then be simulated with your Rocket Chip and "accelerator" block together to test end-to-end system functionality. See [Baremetal Functional Testing](#baremetal-functional-testing).
+Chisel Test is the kind of test that we asked you to write in Lab 0: See [Chisel Testing](#chisel-testing) section on how to setup & run Chisel Tests.
+
+Integration tests (eg. a baremetal C program) are tests that can be simulated with your Rocket Chip and "accelerator" block together to test end-to-end system functionality. See [Baremetal Functional Testing](#baremetal-functional-testing).
 
 
 ### Chisel Testing
@@ -775,7 +777,7 @@ Chipyard provides the infrastructure to help you further simulate, verify & impl
 
 
 
-# Designing a Custom Accelerator (SUBMIT)
+# Designing a Custom Accelerator
 The idea here is to learn how to incorporate a custom RoCC accelerator in an SoC by writing an accelerator generator and effectively utilizing the simplicity and extensibility of Chipyard. This accelerator will be involve a decent amount of Chisel. We recognize that not everyone taking the course will be interested in writing RTL, but even if you do not plan to be on the RTL team, being able to read RTL in Chisel that is being used in Chipyard will be critical.
   * Ex: The verification team will likely need to read chip's RTL to figure out how to test effectively, what the interfaces, etc. look like... When something breaks determine which RTL team to go talk to.
   * The PD team will need to understand Chip level IO, which modules talk to which other module in order to determine floorplanning, which modules have RTL elements that can result in physical design inefficiencies (large queues resulting in register banks, large shifters, etc). 
@@ -786,7 +788,7 @@ The idea here is to learn how to incorporate a custom RoCC accelerator in an SoC
 - A block using the RoCC interface sits on a Rocket Tile.
 - Such a block uses custom non-standard instructions reserved in the RISC-V ISA encoding space.
 - It can communicate using a ready-valid interface with the following:
-  - A core on the Rocket Tile, such as BOOM or Rocket Chip (yes, it's an overloaded name :)
+  - A core on the Rocket Tile, such as BOOM or Rocket Chip (yes, it's an overloaded name :))
   - L1 D$
   - Page Table Walker (available by default on a Rocket Tile)
   - SystemBus, which can be used to communicate with the outer memory system, for instance
@@ -824,7 +826,7 @@ b) The PackBits Decompress module, which performs the PackBits RLE decompression
   * Your implementation should go in the file `$chipyard/generators/packbits-acc/src/main/scala/PackBitsDecompressModule.scala`
   * Software functional models are available [here in Python](https://github.com/psd-tools/packbits/blob/master/src/packbits.py#L4-L26), [here in JavaScript](https://en.wikipedia.org/wiki/PackBits).
 
-c) Integrate your accelerator into the Chipyard build system.
+c) Integrating your accelerator into the Chipyard build system.
   * **You should do this first so you can run the Baremetal tests and get a waveform for debugging.**
   * This involves editing the top level `build.sbt` file to include the project at `$chipyard/generators/packbits-acc`. The `build.sbt` file for the `packbits-acc` project is provided and lives at `$chipyard/generators/packbits-acc/build.sbt`.
   * Once you have integrated the project into Chipyard's top level `build.sbt` file, rename the file at `$chipyard/generators/chipyard/src/main/scala/config/PackBitsDecompConfigs.scala.disabled` to `$chipyard/generators/chipyard/src/main/scala/config/PackBitsDecompConfigs.scala`. This will then register the `PackBitsConfig` so you can run simulations with the flag `CONFIG=PackBitsConfig`.
@@ -849,9 +851,9 @@ Note: A hardware architecture specfication is not a microarchitecture specificat
 
 ## **Staggered release of hints:**
 
-We realize that implementing this accelerator can be extremely challenging & quite a daunting project to take on for a lab. While we want to pose a challenge for you to learn as much about Chipyard, writing RTL, Chisel, integrating accelerators, baremetal testing, etc. etc. as possible, the intention is **not** to burn you out.
+We realize that implementing this accelerator can be extremely challenging & quite a daunting project to take on for a lab. While we want to pose a challenge for you to learn as much as possible about Chipyard, writing RTL, Chisel, integrating accelerators, baremetal testing, etc., the intention is **not** to burn you out.
 
-Please come to office hours or ask TAs questions in the course Slack.
+Please come to office hours or ask TAs questions whenever needed.
 
 We will also be gradually releasing more and more hints as we approach the due date. Starting from ~1 week before the due date, we will release solutions to help everyone integrate their accelerator into Chipyard so they can get a waveform.
 
@@ -859,9 +861,9 @@ Then solutions for the Command Router will be released a few days later.
 
 Finally, we will release hints and potentially a solution to deal with the handling the 256-bit DMA beat in the actual Decompressor module, so all you need to focus on would be the FSM for decompression, which should be relatively easy once you are able to access & process data at the individual byte level.
 
-**If you want to be on the RTL team though, we strongly suggest you implement this without aid from the hints or waiting for the hints.** If you are on the RTL team you will be implementing a design that is a lot more complex than this with a lot more moving parts. Getting used to the long specs (yes there is a high chance we'll have a fully developed spec just like the one above for the actual tapeout design), figuring out what existing Chipyard/Chisel IP does, how to effectively debug are all essential skills that will help you as a RTL designer later in the class.
+**However, if you want to be on the RTL team, we strongly suggest you implement this without waiting for the hints.** If you are on the RTL team you will be implementing a design that is a lot more complex than this with a lot more moving parts. Getting used to the long specs (yes there is a high chance we'll have a fully developed spec just like the one above for the actual tapeout design), figuring out what existing Chipyard/Chisel IP does, how to effectively debug are all essential skills that will help you as a RTL designer later in the class.
 
-<!-- ## Integrating our Accelerator (SUBMIT)
+<!-- ## Integrating our Accelerator
 
 Now that our accelerator works, it is time to incorporate it into an SoC. We do this by:
 1. Defining a config fragment for our accelerator
