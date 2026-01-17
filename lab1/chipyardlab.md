@@ -7,7 +7,7 @@ The [Berkeley Wireless Research Center (BWRC)](https://bwrc.eecs.berkeley.edu/) 
 Since you will be using an active research compute cluster, please be mindful of your computing practices & follow the guidelines outlined below. 
 
 > [!CAUTION]
-> **Not following some of the guidelines can (and have in the past) resulted in BWRC servers freezing & crashing, researchers being unable to log-in, lost compute jobs & research work.**
+> **Not following some of the guidelines can result in BWRC servers freezing & crashing, researchers being unable to log in, lost compute jobs & research work.**
 
 ### Compute Cluster Servers
 #### Login Servers:
@@ -16,7 +16,7 @@ These machines are used as the initial authentication servers for users wanting 
 bwrcrdsl-1.eecs.berkeley.edu (Accepts Remote Desktop via Port 22/SSH, SSH Jump Server)
 bwrcrdsl-{2,3,4,5}.eecs.berkeley.edu (SSH Jump Servers)
 ```
-**DO NOT** run any EDA flows (don't run synthesis, or place & route on there), RTL development (VS Code SSH should be connected to the main compute servers - We'll show you how), or any Chipyard runs on it.
+**DO NOT** run any EDA flows (don't run synthesis, or place & route on there), RTL development (VS Code SSH should be connected to the main compute servers - Let us know! We'll show you how), or any Chipyard runs on it.
   * In a previous iteration of 194 Tapeout, someone started Innovus on the login server and it took down bwrcrdsl-1, and no one could remote desktop into the BWRC network for the entire night.
 
 #### Main Compute Servers:
@@ -33,7 +33,7 @@ The BWRC network has ~250TB of networked storage via a [NFS](https://en.wikipedi
 The following locations are available:
 * Home Folder: `/bwrcq/users` & `/users/<your username>`
   * **No large files should be stored here.** If you have configuration files for tmux, lightweight software you want to install (bash or zsh utilities, etc) they can be placed here, otherwise keep this area clean.
-    * It is generally bad practice to store lots of large files in your home folder on any linux server, as your home folder is typically on a fast but low capacity boot drive. If you store large files there, it'll take up space and result in other users having very little/no space in their home folders, even for small files.
+    * It is generally bad practice to store lots of large files in your home folder on any Linux server, as your home folder is typically on a fast but low capacity boot drive. If you store large files there, it'll take up space and result in other users having very little/no space in their home folders, even for small files.
   * Networked drive, accessible from each machine on the BWRC network, including `rdsl` machines.
 
 * Project space: `/tools/projects`, `/tools/B`, `/tools/C`.
@@ -42,7 +42,7 @@ The following locations are available:
 
 * Scratch Space: `/tools/scratch`, `/scratch`
   * `/tools/scratch` is networked, `/scratch` is local to each machine
-  * Both scratch spaces claim to be auto-purged after 30 days, but this doens't seem to be followed in practice... Though, BWRC syadmins can start enfocing this rule at any point, so no guarentees here.
+  * Both scratch spaces claim to be auto-purged after 30 days, but this doesn't seem to be followed in practice... Though, BWRC sysadmins can start enforcing this rule at any point, so no guarantees here.
 
 * Tools & Licensing & PDKs
   * EDA Tools are under `/tools` -- Ex: `/tools/cadence`, `/tools/synopsys`, `/tools/mentor`
@@ -56,7 +56,7 @@ The following locations are available:
     * `sw` = SkyWater
 
 Advice:
-* Networked drives are slower than the ones that are local (ie: `/scratch` is the fastest here). If you are just trying to setup Chipyard or something that has to quickly write a lot of files (as you will see later, Chipyard setup has a lot of file system activity), do this on `/scratch`
+* Networked drives are slower than the ones that are local (i.e., `/scratch` is the fastest here). If you are just trying to setup Chipyard or something that has to quickly write a lot of files (as you will see later, Chipyard setup has a lot of file system activity), do this on `/scratch`
 * You want to probably setup your main tapeout work on a networked drive so things aren't lost if the sysadmins do a sweep and you forgot to check your work into Git, but things will run a bit slower.
   * If you are good at checking stuff into Git, you can probably live with stuff just being on `/scratch`.
 
@@ -80,7 +80,7 @@ You should know how to do this at this point; so we won't go into too much detai
 * Setup your SSH key for passwordless login to `bwrcrdsl`
   * Note, `ssh-copy-id` will copy the first SSH key you have. If you have multiple SSH keys, you will need to manually copy the public key over under `~/.ssh/authorized_keys` on the remote server.
 * Write a SSH config to jump through `bwrcrdsl` to log in to `bwrcix` machines
-  * Here is one you can use - add these lines to our `~/.ssh/config` file on our LOCAL MACHINE.
+  * Here is one you can use - add these lines to your `~/.ssh/config` file on your LOCAL MACHINE.
     ```sh
     Host bwrcix-?
       HostName %h.eecs.berkeley.edu
@@ -97,7 +97,7 @@ You should know how to do this at this point; so we won't go into too much detai
       ForwardX11Trusted yes
     ```
   * Then when you connect via VSCode, just type `bwrcix-1` in the window that comes up, it'll automatically use the ssh config above. - To confirm, after connecting, open the integrated terminal and type `hostname` -- make sure this says `bwrcix-1.eecs.berkeley.edu`
-* Generate a SSH key on bwrc machines, add it to GitHub & GitLab so you can clone using ssh.
+* Generate an SSH key on bwrc machines, add it to GitHub & GitLab so you can clone using ssh.
 * Configure your local git config -- Example:
   ```
   git config --global user.name "Mona Lisa"
@@ -117,7 +117,7 @@ It is open-sourced online and is based on the Chisel hardware description langua
 
 A designer can use Chipyard to build, test, and tapeout (prepare a design for fabrication) a RISC-V-based SoC. This includes RTL development through existing chip IP in Chipyard, cloud FPGA-accelerated simulation with FireSim, and physical design with the Hammer VLSI framework.
 
-Chisel is the primary hardware description language (HDL) used at Berkeley and in Chipyard (This is why we had you do Lab 0 early!). Chipyard supercharges Chisel by providing it a rich amount of pre-existing blocks that are written to be compatible to the "agile design" mentatlity -- this means existing generators for "blocks" on a chip that are parameterized, and various different configurations that allow you to combine one block with another. You will be writing an accelerator in Chisel in this lab and coupling it to a Rocket Core (5-stage, in order, RISC-V). This lab aims to familarize you with the Chipyard framework and give you hands on experience writing a piece of RTL that both use and couples to existing components in Chipyard.
+Chisel is the primary hardware description language (HDL) used at Berkeley and in Chipyard (This is why we had you do Lab 0 early!). Chipyard supercharges Chisel by providing it a rich set of pre-existing blocks that are written to be compatible to the "agile design" mentatlity -- this means existing generators for "blocks" on a chip that are parameterized, and various different configurations that allow you to combine one block with another. You will be writing an accelerator in Chisel in this lab and coupling it to a Rocket Core (5-stage, in order, RISC-V). This lab aims to familiarize you with the Chipyard framework and give you hands on experience writing a piece of RTL that both use and couples to existing components in Chipyard.
 
 Here are some resources to learn more about Chisel -- See Lab 0:
 - [Lab 0](https://github.com/ucb-ee194-tapeout/chisel-labs)
@@ -187,7 +187,7 @@ chgrp tstech16c .
 chmod 2750 .
 ```
 
-This is because since be working with TSMC proprietary information in our repository, we must limit the access of this directory to only those within the `tstech16c` Unix group. You should do this for any folder containing TSMC proprietary information.
+This is because since we will be working with TSMC proprietary information in our repository, we must limit the access of this directory to only those within the `tstech16c` Unix group. You should do this for any folder containing TSMC proprietary information.
 
 
 6) To use Conda w/ Miniforge, like the [**Official Chipyard
@@ -210,7 +210,7 @@ source ~/miniforge3/bin/activate
 ```
 and see if your terminal session has the conda-related commands and paths imported.
 
-Now run the following commands to complete the chipyard setup.
+Now run the following commands to complete the Chipyard setup.
 ```sh
 conda config --set channel_priority true
 conda install -n base conda-libmamba-solver
@@ -256,7 +256,7 @@ Over the course of the semester, we will find ourselves working with different C
 
 You should source the `env.sh` file in the Chipyard repository you wish to work in <!--- in your [`.bashrc`](https://www.digitalocean.com/community/tutorials/bashrc-file-in-linux) or equivalent environment setup file to get the proper variables, or directly include it in your current environment --> by **running the above command every time you open a new terminal or start a new work session**.
 
-This concludes the chipyard setup.
+This concludes the Chipyard setup.
 
 **Below, we list the commands that should be run at every new terminal session.**
 ```sh
@@ -267,7 +267,7 @@ source ./env.sh
 source /tools/C/ee194-sp26/bwrc-env.sh 
 ```
 
-You can write these into a shell script or bash alias that you call upon first login to source everything you need in 1 command. Historically we've seen students sometimes run into issues logging in over NoMachine when including these commands into their `.bashrc`. Hence we recommend setting up a shell script or bash alias you run manually instead of automatically running these during log in.
+You can write these into a shell script or bash alias that you call upon first login to source everything you need in 1 command. Historically we've seen students sometimes run into issues logging in over NoMachine when including these commands in their `.bashrc`. Hence we recommend setting up a shell script or bash alias you run manually instead of automatically running these during log in.
 
 
 ## Chipyard Repo Files & Directories Overview
@@ -534,11 +534,9 @@ Inspect `MysteryRocketConfig` & answer the following questions. You should be ab
 
 **4. What accelerator does this config contain? Is this accelerator connected through RoCC or MMIO?**
 
-**5. Does this config support custom boot? If yes, what is the custom boot address?**
+**5. Does this config include a FPU (floating point unit)?**
 
-**6. Does this config include a FPU (floating point unit)?**
-
-**7. Does this config include a multiple-divide pipeline?**
+**6. Does this config include a multiple-divide pipeline?**
 
 ## Exercise: Compiling a Config 
 
@@ -563,7 +561,7 @@ Answer the following question:
 
 ## RTL Simulation of SoCs in Chipyard
 
-A simple RISCV test can be found under `$RISCV/riscv64-unknown-elf/share/riscv-tests/isa/`and can be run in `$chipyard/sims/vcs` as:
+A simple RISC-V test can be found under `$RISCV/riscv64-unknown-elf/share/riscv-tests/isa/`and can be run in `$chipyard/sims/vcs` as:
 ```sh
 make run-binary CONFIG=RocketConfig BINARY=$RISCV/riscv64-unknown-elf/share/riscv-tests/isa/rv64ui-p-simple
 ```
@@ -584,7 +582,7 @@ The first part of the command (`CONFIG=RocketConfig`) will elaborate the design 
 
 This is done by converting the Chisel code, embedded in Scala, into a FIRRTL intermediate representation which is then run through the FIRRTL compiler to generate Verilog (for more details, see lab 0).
 
-Next it will run VCS (hence the `sims/vcs` folder) to build a simulator out of the generated Verilog that can run RISC-V binaries.
+Next, it will run VCS (hence the `sims/vcs` folder) to build a simulator out of the generated Verilog that can run RISC-V binaries.
 
 The second part of the command (`BINARY=...`) will run the test specified by `BINARY` and output results as an `.out` file.
 
@@ -784,9 +782,9 @@ Chipyard provides the infrastructure to help you further simulate, verify & impl
 
 
 # Designing a Custom Accelerator
-The idea here is to learn how to incorporate a custom RoCC accelerator in an SoC by writing an accelerator generator and effectively utilizing the simplicity and extensibility of Chipyard. This accelerator will be involve a decent amount of Chisel. We recognize that not everyone taking the course will be interested in writing RTL, but even if you do not plan to be on the RTL team, being able to read RTL in Chisel that is being used in Chipyard will be critical.
-  * Ex: The verification team will likely need to read chip's RTL to figure out how to test effectively, what the interfaces, etc. look like... When something breaks determine which RTL team to go talk to.
-  * The PD team will need to understand Chip level IO, which modules talk to which other module in order to determine floorplanning, which modules have RTL elements that can result in physical design inefficiencies (large queues resulting in register banks, large shifters, etc). 
+The idea here is to learn how to incorporate a custom RoCC accelerator in an SoC by writing an accelerator generator and effectively utilizing the simplicity and extensibility of Chipyard. This accelerator will involve a decent amount of Chisel. We recognize that not everyone taking the course will be interested in writing RTL, but even if you do not plan to be on the RTL team, being able to read RTL in Chisel that is being used in Chipyard will be critical.
+  * Ex: The verification team will likely need to read chip's RTL to figure out how to test effectively, what the interfaces, etc. look like... When something breaks, determine which RTL team to go talk to.
+  * The PD team will need to understand chip level IO, which modules talk to which other module in order to determine floorplanning, which modules have RTL elements that can result in physical design inefficiencies (large queues resulting in register banks, large shifters, etc). 
 
 ## RoCC Accelerator Interface
 
@@ -818,7 +816,7 @@ The TL;DR of the implementation is: you will be implementing a [PackBit Run-Leng
 You will need to implement parts or all of the following:
 
 a) The Command Router module, which takes parses & extracts incoming RoCC instructions.
-  * It will extract the address to read/load data from & the amount of bytes to read from an incoming RoCC instruction, then enqueue them into a Queue, which will be consumed by a provided L2$ DMA reader engine.
+  * It will extract the address to read/load data from & the number of bytes to read from an incoming RoCC instruction, then enqueue them into a Queue, which will be consumed by a provided L2$ DMA reader engine.
   * It will extract the address to write decompressed results to from an incoming RoCC instruction, then enqueue them into a Queue, which will be consumed by a provided L2$ DMA writer engine.
   * See the baremetal C tests for what fields of the RoCC instructions contain what information. The first RoCC instruction seen in C tests contains the address to load from & amount of bytes to load. The second RoCC instruction in the C tests contain a destination memory address for results to be written to.
   * The file to edit is `$chipyard/generators/packbits-acc/src/main/scala/PackBitsCommandRouter.scala`.
@@ -836,7 +834,7 @@ c) Integrating your accelerator into the Chipyard build system.
   * **You should do this first so you can run the Baremetal tests and get a waveform for debugging.**
   * This involves editing the top level `build.sbt` file to include the project at `$chipyard/generators/packbits-acc`. The `build.sbt` file for the `packbits-acc` project is provided and lives at `$chipyard/generators/packbits-acc/build.sbt`.
   * Once you have integrated the project into Chipyard's top level `build.sbt` file, rename the file at `$chipyard/generators/chipyard/src/main/scala/config/PackBitsDecompConfigs.scala.disabled` to `$chipyard/generators/chipyard/src/main/scala/config/PackBitsDecompConfigs.scala`. This will then register the `PackBitsConfig` so you can run simulations with the flag `CONFIG=PackBitsConfig`.
-  * Look at [this file](/lab1//assets/03_building_custom_socs.pdf) for a conference demo/guide on how to integrate a RoCC accelerator into Chipyard's build system. 
+  * Look at [this file](/lab1/assets/03_building_custom_socs.pdf) for a conference demo/guide on how to integrate a RoCC accelerator into Chipyard's build system. 
 
 Additional Debugging Tip: You can print something to the `.out` file during simulation in your Chisel RTL with the following line:
 `PackBitsAccLogger.logInfo("TEXT: %x\n", Chisel data)`
@@ -845,15 +843,15 @@ See an example in `$chipyard/generators/packbits-acc/src/main/scala/PackBitsMemL
 
 Deliverables: see [here](https://docs.google.com/document/d/1viKR8vl9QMF1Z8KPHJBwYqC1Y6W0rQxeLEIpcXNWxoE/edit?tab=t.0#heading=h.rqd04dy49y1h).
 
-A extended Hardware Architectural Specification is available [here](https://docs.google.com/document/d/1viKR8vl9QMF1Z8KPHJBwYqC1Y6W0rQxeLEIpcXNWxoE/edit?tab=t.0). This is a long document with probably way more information (and quite a bit of background/non-absolutely necessary information) than you need.
+An extended Hardware Architectural Specification is available [here](https://docs.google.com/document/d/1viKR8vl9QMF1Z8KPHJBwYqC1Y6W0rQxeLEIpcXNWxoE/edit?tab=t.0). This is a long document with probably way more information (and quite a bit of background/non-absolutely necessary information) than you need.
 
 As this class's ongoing effort to mimic what you may experience in research or industry, this spec was written to give you an idea of what a hardware architecture specification that defines the hardware & software interface may look like in industry. 
 
-There is definitely still quite a degree of difference here as we are working with quite a small design & therefore there was a good degree of fillers, but it was written with inspriation of what [NVIDIA has published for their Deep Learning Accelerator](https://nvdla.org/hw/v1/hwarch.html) and what staff has seen from industry design experience.
+There is definitely still quite a degree of difference here as we are working with quite a small design & therefore there was a good degree of filler content, but it was written with inspiration of what [NVIDIA has published for their Deep Learning Accelerator](https://nvdla.org/hw/v1/hwarch.html) and what staff has seen from industry design experience.
 
-In a large design a well developed specification that defines how software should interact with hardware is critical in ensuring that the software folks that will be writing software for a custom piece of hardware is aware of how to interface and effectively use it. It also provides critical information to the hardware and microarchitecture design teams on how they should implement the hardware so that functionality and performance metrics are met.
+In a large design, a well developed specification that defines how software should interact with hardware is critical in ensuring that the software folks that will be writing software for a custom piece of hardware is aware of how to interface and effectively use it. It also provides critical information to the hardware and microarchitecture design teams on how they should implement the hardware so that functionality and performance metrics are met.
 
-Note: A hardware architecture specfication is not a microarchitecture specification. It does not define how the hardware should be implemented. It only aims to cover the software & hardware interface. That is on purpose here as you should be the main designer for the microarchitecture.
+Note: A hardware architecture specification is not a microarchitecture specification. It does not define how the hardware should be implemented. It only aims to cover the software & hardware interface. That is on purpose here as you should be the main designer for the microarchitecture.
 
 ## **Staggered release of hints**
 
@@ -865,9 +863,9 @@ We will also be gradually releasing more and more hints as we approach the due d
 
 Then solutions for the Command Router will be released a few days later.
 
-Finally, we will release hints and potentially a solution to deal with the handling the 256-bit DMA beat in the actual Decompressor module, so all you need to focus on would be the FSM for decompression, which should be relatively easy once you are able to access & process data at the individual byte level.
+Finally, we will release hints and potentially a solution to deal with handling the 256-bit DMA beat in the actual Decompressor module, so all you need to focus on would be the FSM for decompression, which should be relatively easy once you are able to access & process data at the individual byte level.
 
-**However, if you want to be on the RTL team, we strongly suggest you implement this without waiting for the hints.** If you are on the RTL team you will be implementing a design that is a lot more complex than this with a lot more moving parts. Getting used to the long specs (yes there is a high chance we'll have a fully developed spec just like the one above for the actual tapeout design), figuring out what existing Chipyard/Chisel IP does, how to effectively debug are all essential skills that will help you as a RTL designer later in the class.
+**However, if you want to be on the RTL team, we strongly suggest you implement this without waiting for the hints.** If you are on the RTL team, you will be implementing a design that is a lot more complex than this with a lot more moving parts. Getting used to the long specs (yes, there is a high chance we'll have a fully developed spec just like the one above for the actual tapeout design), figuring out what existing Chipyard/Chisel IP does and how to effectively debug are all essential skills that will help you as an RTL designer later in the class.
 
 <!-- ## Integrating our Accelerator
 
