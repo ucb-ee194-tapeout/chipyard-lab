@@ -129,11 +129,17 @@ Throughout the rest of the course, we will be developing our SoC using Chipyard 
 This lab provides a brief overview of Chipyard's diverse features, and then guides one through designing, verifying, and incorporating an accelerator into an SoC. This lab will focus more on coupling the accelerator to the SoC via the [RoCC](https://chipyard.readthedocs.io/en/latest/Customization/RoCC-Accelerators.html) protocol, but will also briefly touch on coupling via [MMIO](https://chipyard.readthedocs.io/en/latest/Customization/RoCC-or-MMIO.html). 
 
 ## Setup Chipyard
-Go to your folder of choice (`/scratch/` or `/tools/C` - See above) -- We'll use `/tools/C/$USER` as an example. Where `$USER` is your EECS IRIS account username.
+Go to your folder of choice (`/scratch/` or `/tools/C` - See above) -- We'll use `/tools/C/$USER` as an example. Where `$USER` is your EECS IRIS account username. **REPLACE ALL INSTANCES OF `/tools/C` WITH `/scratch` IF YOU DECIDE TO USE SCRATCH.**
 
 Please create your user folder if it doesn't exist, by running
 ```sh
 mkdir /tools/C/$USER
+```
+
+and cd into this folder.
+
+```sh
+cd /tools/C/$USER
 ```
 
 If you run into any issues, please contact course staff. <b>DO NOT</b> work out of the home directory `~`.
@@ -170,7 +176,7 @@ cd ee194-lab1
 
 4) Run
 ```sh
-export chipyard=/tools/C/<your username>/ee194-lab1
+export chipyard=/tools/C/$USER/ee194-lab1
 ```
 to set the repo path as an [environment variable](https://www.geeksforgeeks.org/environment-variables-in-linux-unix/). We will be referring to the repo path as `$chipyard` from now on. You might also see `${CY}` used at times as well. They mean the same thing.
 
@@ -254,14 +260,14 @@ This concludes the chipyard setup.
 
 **Below, we list the commands that should be run at every new terminal session.**
 ```sh
-# In your chipyard directory
-export chipyard=/tools/C/<your username>/ee194-lab1
+export chipyard=/tools/C/$USER/ee194-lab1
+cd $chipyard
 source ~/miniforge3/bin/activate
 source ./env.sh
 source /tools/C/ee194-sp26/bwrc-env.sh 
 ```
 
-You can write these into a shell script or bash alias that you call upon first login to source everything you need in 1 command. Historically we've seen folks sometimes run into issues logging in over NoMachine when including these commands into their `.bashrc`, hence we recommend setting up a shell script you run manually instead of automatically running these during log in.
+You can write these into a shell script or bash alias that you call upon first login to source everything you need in 1 command. Historically we've seen students sometimes run into issues logging in over NoMachine when including these commands into their `.bashrc`. Hence we recommend setting up a shell script or bash alias you run manually instead of automatically running these during log in.
 
 
 ## Chipyard Repo Files & Directories Overview
@@ -849,7 +855,7 @@ In a large design a well developed specification that defines how software shoul
 
 Note: A hardware architecture specfication is not a microarchitecture specification. It does not define how the hardware should be implemented. It only aims to cover the software & hardware interface. That is on purpose here as you should be the main designer for the microarchitecture.
 
-## **Staggered release of hints:**
+## **Staggered release of hints**
 
 We realize that implementing this accelerator can be extremely challenging & quite a daunting project to take on for a lab. While we want to pose a challenge for you to learn as much as possible about Chipyard, writing RTL, Chisel, integrating accelerators, baremetal testing, etc., the intention is **not** to burn you out.
 
