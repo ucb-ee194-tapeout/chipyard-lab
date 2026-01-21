@@ -470,7 +470,9 @@ All of these modules are built as generators (a core driving point of using Chis
 
 
 ### Exercise: Interpreting a Config
-Chipyard Configs describe what goes into our final ystem and what paramters our designs are elaborated with. You can find the configs in `$chipyard/generators/chipyard/src/main/scala/config`.
+**For all of the exercises in this lab, please submit your answers / follow along on [this](https://docs.google.com/forms/d/e/1FAIpQLSffo6ygIZy4s1R3iwE7iIs5wsAZyIvH5NQtlochZiHMh9rCFg/viewform?usp=publish-editor) Google Form.**
+
+Chipyard Configs describe what goes into our final system and what paramters our designs are elaborated with. You can find the configs in `$chipyard/generators/chipyard/src/main/scala/config`.
 
 Look at the configs located in `$chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala`, specifically `RocketConfig`
 
