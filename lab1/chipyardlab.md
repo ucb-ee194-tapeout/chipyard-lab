@@ -536,7 +536,7 @@ Inspect `MysteryRocketConfig` & answer the following questions. You should be ab
 
 **5. Does this config include a FPU (floating point unit)?**
 
-**6. Does this config include a multiple-divide pipeline?**
+**6. Does this config include a multiply-divide pipeline?**
 
 ## Exercise: Compiling a Config 
 
@@ -557,7 +557,7 @@ After the run is done, check the `$chipyard/sims/vcs/generated-src/` folder. Fin
 
 Answer the following question:
 
-**1. Try to find the top-level SystemVerilog/Verilog modules that correspond to the ICache/DCache? What are they called? For ICache, name 1 module that is instantiated in the SystemVerilog file that contains the *implementation (not instantiation)* for the ICache. *Hint: what modules look like they represent memories?***
+**1. Try to find the top-level SystemVerilog/Verilog modules that correspond to the ICache/DCache. What are they called? For ICache, name one module that is instantiated in the SystemVerilog file that contains the *implementation (not instantiation)* for the ICache. *Hint: what modules look like they represent memories?***
 
 ## RTL Simulation of SoCs in Chipyard
 
