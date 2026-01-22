@@ -164,9 +164,9 @@ This script is responsible for setting up the tools and environment used in this
 
 **You will need to source this script in every new terminal & at the start of every work session, or put this in your bashrc or zshrc**
 
-2) Clone the lab chipyard repo: [git@bwrcrepo.eecs.berkeley.edu:ee194-290c-sp26/chipyard-ee194.git](git@bwrcrepo.eecs.berkeley.edu:ee194-290c-sp26/chipyard-ee194.git).
+2) Clone the lab chipyard repo: [git@bwrcrepo.eecs.berkeley.edu:ee194-290c-sp26/sp26-staff-only/chipyard-ee194.git](git@bwrcrepo.eecs.berkeley.edu:ee194-290c-sp26/sp26-staff-only/chipyard-ee194.git).
 ```sh
-git clone git@bwrcrepo.eecs.berkeley.edu:ee194-290c-sp26/chipyard-ee194.git ee194-lab1
+git clone git@bwrcrepo.eecs.berkeley.edu:ee194-290c-sp26/sp26-staff-only/chipyard-ee194.git ee194-lab1
 ```
 
 3) Run
