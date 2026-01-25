@@ -45,7 +45,7 @@ int main(void) {
         printf("%02X ", outbuf[i]);
         if ((i + 1) % 8 == 0) {
             printf("\n");
-        }r
+        }
         // Check correctness
         if (outbuf[i] != expect_0[i]) {
             printf("Test 0 Failed at byte %d: Expected %02X, Got %02X\n", i, expect_0[i], outbuf[i]);
