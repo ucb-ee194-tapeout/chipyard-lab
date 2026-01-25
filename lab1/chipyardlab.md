@@ -702,7 +702,7 @@ Thus, there lies significant value in writing a functional model that performs t
 
 Answer the following question:
 
-**1. What assembly instruction does the last argument of `ROCC_INSTRUCTION_DSS` stand for? You don't need to include the entire instruction, just the first 5 characters will be sufficient. What argument does `ROCC_INSTRUCTION_DSS` accept -- When would you use it?**
+**1. What assembly instruction does ROCC_INSTRUCTION_DSS stand for? You don't need to include the entire instruction, just the first 5 characters will be sufficient. What argument does ROCC_INSTRUCTION_DSS accept -- When would you use it?**
 
 Next, we compile our test by running the following in the `$chipyard/generators/packbits-acc/baremetal_test` directory:
 ```sh
