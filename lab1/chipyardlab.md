@@ -513,8 +513,8 @@ class RocketConfig extends Config(
   </tr>
   <tr>
     <td>How many bytes are in a block for the L1 DCache? How many sets are in the L1 DCache? Ways?</td>
-    <td>64 Block Bytes, 64 Sets, 4 Ways</td>
-    <td>We don't see anything about L1 DCaches in <code>AbstractConfig</code>, so we grep for <code>WithNBigCores</code> at <code>$chipyard/generators/rocket-chip/src/main/scala/</code>. We find it in <code>$chipyard/generators/rocket-chip/src/main/scala/subsystem/Configs.scala</code> We see that the fragment instantiates a dcache with <code>DCacheParams</code> We notice it passes in <code>CacheBlockBytes</code> to blockBytes. So, we grep for <code>CacheBlockBytes</code> in <code>$chipyard/generators/rocket-chip/src/main/scala/</code> and see <pre><code>src/main/scala/subsystem/BankedL2Params.scala:case object CacheBlockBytes extends Field[Int](64)</code></pre> Then, we grep for <code>DCacheParams</code> and find it in<code>$chipyard/generators/rocket-chip/src/main/scala/rocket/HellaCache.scala</code> where we find the <code>nSets</code> and <code>nWays</code> fields</td>
+    <td>64 Block Bytes, 64 Sets, 8 Ways</td>
+    <td>We don't see anything about L1 DCaches in <code>AbstractConfig</code>, so we grep for <code>WithNHugeCores</code> at <code>$chipyard/generators/rocket-chip/src/main/scala/</code>. We find it in <code>$chipyard/generators/rocket-chip/src/main/scala/subsystem/Configs.scala</code> We see that the fragment instantiates a dcache with <code>DCacheParams</code> We notice it passes in <code>CacheBlockBytes</code> to blockBytes. So, we grep for <code>CacheBlockBytes</code> in <code>$chipyard/generators/rocket-chip/src/main/scala/</code> and see <pre><code>src/main/scala/subsystem/BankedL2Params.scala:case object CacheBlockBytes extends Field[Int](64)</code></pre> Then, we grep for <code>DCacheParams</code> and find it in<code>$chipyard/generators/rocket-chip/src/main/scala/rocket/HellaCache.scala</code> where we find the <code>nSets</code> and <code>nWays</code> fields</td>
   </tr>
   <tr>
     <td>Is there an L2 used in this config? What size?</td>
@@ -702,9 +702,9 @@ Thus, there lies significant value in writing a functional model that performs t
 
 Answer the following question:
 
-**1. What assembly instruction does ROCC_INSTRUCTION_DSS stand for? You don't need to include the entire instruction, just the first 5 characters will be sufficient. What argument does ROCC_INSTRUCTION_DSS accept -- When would you use it?**
+**1. How is a RoCC instruction (in this case ROCC_INSTRUCTION_DSS) represented in assembly? You don't need to include the entire assembly instruction, just the first 5 characters (the name of the assembly instruction) will be sufficient. What argument does ROCC_INSTRUCTION_DSS accept -- When would you use it?**
 
-Next, we compile our test by running the following in the `$chipyard/generators/packbits-acc/baremetal_test` directory:
+Next, we compile our test by running the following in the `$chipyard/generators/packbits-acc/baremetal-test` directory:
 ```sh
 riscv64-unknown-elf-gcc -fno-common -fno-builtin-printf -specs=htif_nano.specs -c TestPackBitsDecompHello.c
 riscv64-unknown-elf-gcc -static -specs=htif_nano.specs TestPackBitsDecompHello.o -o TestPackBitsDecompHello.riscv
@@ -727,7 +727,7 @@ We can run this baremetal test with the following command. These tests will run 
 
 When running, make sure you are in `$chipyard/sims/vcs`, then run:
 ```sh
-make -j32 CONFIG=PackBitsConfig BINARY=../../generators/packbits-acc/baremetal_test/TestPackBitsDecompHello.riscv run-binary-debug SIM_FLAGS="-debug_accss+all"
+make -j32 CONFIG=PackBitsConfig BINARY=../../generators/packbits-acc/baremetal-test/TestPackBitsDecompHello.riscv run-binary-debug SIM_FLAGS="-debug_accss+all"
 ```
 
 It might take a few minutes to build and compile the test harness, and run the simulation.
@@ -894,11 +894,19 @@ class CustomAccRoCCConfig extends Config(
 )
 ``` -->
 
-## Acknowledgements
+## Acknowledgements & History
 
 Thank you to the whole Chipyard dev team for figures and documentation on Chipyard, and to Daniel Grubb for authorship of the original tutorial on which this lab is based.
 
 Additionally, a huge thanks to Ethan Gao for a good chunk of the Chipyard overview content.
+
+Significant content changes were made to this lab during Spring 2026. Thank you to the following students from the Sp26 iteration of EE194 for suggesting changes to this lab when it was released for the first time:
+* Christian F Roque-Ayala
+* Ansh Maroo
+* Alonzo Zul Alonso
+* Louie Laylay Labata
+* Marie-Anne Xu
+
  <!--
 ## VLSI Flow
 
