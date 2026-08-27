@@ -470,7 +470,7 @@ All of these modules are built as generators (a core driving point of using Chis
 
 
 ### Exercise: Interpreting a Config
-**For all of the exercises in this lab, please submit your answers / follow along on [this](https://docs.google.com/forms/d/e/1FAIpQLSffo6ygIZy4s1R3iwE7iIs5wsAZyIvH5NQtlochZiHMh9rCFg/viewform?usp=publish-editor) Google Form.**
+**For all of the exercises in this lab, please submit your answers / follow along on [this](https://docs.google.com/forms/d/e/1FAIpQLSdspF3BokclVfJS6Kb3O6AsCOMB1cHBsMHn8NRQitP4Qxykmg/viewform) Google Form.**
 
 Chipyard Configs describe what goes into our final system and what paramters our designs are elaborated with. You can find the configs in `$chipyard/generators/chipyard/src/main/scala/config`.
 
@@ -855,7 +855,15 @@ In a large design, a well developed specification that defines how software shou
 
 Note: A hardware architecture specification is not a microarchitecture specification. It does not define how the hardware should be implemented. It only aims to cover the software & hardware interface. That is on purpose here as you should be the main designer for the microarchitecture.
 
-## **Staggered release of hints**
+# Setting up the Bringup Chipyard
+
+Congratulations, you have finished all the technical tasks of the lab. As a final task, please make sure to make a new fresh clone of [this chipyard version](git@github.com:ucb-ee194-tapeout/chipyard.git). It has a link to the accelerator RTL that was taped out in Spring 2026. Follow all the same setup instructions detailed above. All our work this semester is going to on this chipyard. 
+
+Deliverable: submit a BWRC server filepath to this chipyard after the build setup script finished successfully.
+
+
+
+<!-- ## **Staggered release of hints**
 
 We realize that implementing this accelerator can be extremely challenging & quite a daunting project to take on for a lab. While we want to pose a challenge for you to learn as much as possible about Chipyard, writing RTL, Chisel, integrating accelerators, baremetal testing, etc., the intention is **not** to burn you out.
 
@@ -867,7 +875,7 @@ Then solutions for the Command Router will be released a few days later.
 
 Finally, we will release hints and potentially a solution to deal with handling the 256-bit DMA beat in the actual Decompressor module, so all you need to focus on would be the FSM for decompression, which should be relatively easy once you are able to access & process data at the individual byte level.
 
-**However, if you want to be on the RTL team, we strongly suggest you implement this without waiting for the hints.** If you are on the RTL team, you will be implementing a design that is a lot more complex than this with a lot more moving parts. Getting used to the long specs (yes, there is a high chance we'll have a fully developed spec just like the one above for the actual tapeout design), figuring out what existing Chipyard/Chisel IP does and how to effectively debug are all essential skills that will help you as an RTL designer later in the class.
+**However, if you want to be on the RTL team, we strongly suggest you implement this without waiting for the hints.** If you are on the RTL team, you will be implementing a design that is a lot more complex than this with a lot more moving parts. Getting used to the long specs (yes, there is a high chance we'll have a fully developed spec just like the one above for the actual tapeout design), figuring out what existing Chipyard/Chisel IP does and how to effectively debug are all essential skills that will help you as an RTL designer later in the class. -->
 
 <!-- ## Integrating our Accelerator
 
