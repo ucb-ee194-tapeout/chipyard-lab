@@ -55,9 +55,6 @@
 [submodule "generators/rocket-chip-inclusive-cache"]
 	path = generators/rocket-chip-inclusive-cache
 	url = https://github.com/chipsalliance/rocket-chip-inclusive-cache.git
-[submodule "generators/shuttle"]
-	path = generators/shuttle
-	url = https://github.com/ucb-bar/shuttle.git
 [submodule "generators/testchipip"]
 	path = generators/testchipip
 	url = https://github.com/ucb-bar/testchipip.git
@@ -136,9 +133,6 @@
 [submodule "generators/compress-acc"]
 	path = generators/compress-acc
 	url = https://github.com/ucb-bar/compress-acc.git
-[submodule "generators/saturn"]
-	path = generators/saturn
-	url = https://github.com/ucb-bar/saturn-vectors.git
 [submodule "software/firesim-paper-workloads"]
 	path = software/firesim-paper-workloads
 	url = https://github.com/firesim/firesim-paper-workloads.git
@@ -166,3 +160,12 @@
 [submodule "software/spec2026"]
 	path = software/spec2026
 	url = https://github.com/ucb-bar/spec2026-workload.git
+[submodule "generators/atlas-npu"]
+	path = generators/atlas-npu
+	url = git@github.com:ucb-bar/atlas-npu.git
+[submodule "generators/shuttle"]
+	path = generators/shuttle
+	url = git@github.com:ucb-bar/shuttle.git
+[submodule "generators/saturn"]
+	path = generators/saturn
+	url = git@github.com:ucb-ee194-tapeout/saturn-vectors.git

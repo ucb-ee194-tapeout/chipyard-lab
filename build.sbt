@@ -238,7 +238,8 @@ lazy val chipyard = {
     "caliptra-aes-acc" -> caliptra_aes,
     "compress-acc" -> compressacc,
     "mempress" -> mempress,
-    "fft-generator" -> fft_generator
+    "fft-generator" -> fft_generator,
+    "atlas-npu" -> sp26atlas
   )
 
   // Discover optional modules if their submodule is initialized
@@ -278,6 +279,33 @@ lazy val barf = withInitCheck((project in file("generators/bar-fetchers")), "bar
   .dependsOn(rocketchip)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(commonSettings)
+
+lazy val fpex = (project in file ("generators/atlas-npu/dependencies/fpex"))
+  .dependsOn(rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
+
+lazy val sp26FPUnits = (project in file ("generators/atlas-npu/dependencies/sp26-fp-units"))
+  .dependsOn(rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
+
+lazy val sp26atlas = withInitCheck((project in file ("generators/atlas-npu")), "atlas-npu")
+  .dependsOn(rocketchip, fpex, sp26FPUnits, testchipip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
+  .settings(
+    Test / unmanagedSources := {
+      val files = (Test / unmanagedSources).value
+      val root = (ThisBuild / baseDirectory).value
+      val excludeDir =
+        (root / "generators/atlas-npu/src/test/scala/atlas").getCanonicalFile
+
+      files.filterNot { f =>
+        f.getCanonicalFile.toPath.startsWith(excludeDir.toPath)
+      }
+    }
+  )
 
 lazy val saturn = withInitCheck((project in file("generators/saturn")), "saturn")
   .dependsOn(rocketchip, shuttle)
