@@ -164,9 +164,9 @@ This script is responsible for setting up the tools and environment used in this
 
 **You will need to source this script in every new terminal & at the start of every work session, or put this in your bashrc or zshrc**
 
-2) Clone the lab chipyard repo: [git@bwrcrepo.eecs.berkeley.edu:ee194-290c-sp26/sp26-staff-only/chipyard-ee194.git](git@bwrcrepo.eecs.berkeley.edu:ee194-290c-sp26/sp26-staff-only/chipyard-ee194.git).
+2) Clone the lab chipyard repo: [git@github.com:ucb-ee194-tapeout/chipyard-lab.git](git@github.com:ucb-ee194-tapeout/chipyard-lab.git).
 ```sh
-git clone git@bwrcrepo.eecs.berkeley.edu:ee194-290c-sp26/sp26-staff-only/chipyard-ee194.git ee194-lab1
+git clone git@github.com:ucb-ee194-tapeout/chipyard-lab.git ee194-lab1
 ```
 
 3) Run
@@ -180,17 +180,7 @@ export chipyard=/tools/C/$USER/ee194-lab1
 ```
 to set the repo path as an [environment variable](https://www.geeksforgeeks.org/environment-variables-in-linux-unix/). We will be referring to the repo path as `$chipyard` from now on. You might also see `${CY}` used at times as well. They mean the same thing.
 
-5) Run
-
-```sh
-chgrp tstech16c .
-chmod 2750 .
-```
-
-This is because since we will be working with TSMC proprietary information in our repository, we must limit the access of this directory to only those within the `tstech16c` Unix group. You should do this for any folder containing TSMC proprietary information.
-
-
-6) To use Conda w/ Miniforge, like the [**Official Chipyard
+5) To use Conda w/ Miniforge, like the [**Official Chipyard
 Setup**](https://chipyard.readthedocs.io/en/stable/Chipyard-Basics/Initial-Repo-Setup.html), run the following commands.
 
 ```sh
@@ -226,12 +216,33 @@ conda activate /tools/C/ee290-sp25/chipyard/.conda-env/
 
 This command, in Chipyard, uses the Conda package manager to help manage system dependencies. Conda creates a virtual environment that holds system dependencies like `make`, `gcc`, etc. We've also installed a pre-built RISC-V toolchain into it. We want to ensure that everyone in the class is using the same version of everything, so everyone will be using the same conda environment by activating the environment specified above. <b>You will need to do this in every new terminal & at the start of every work session.</b> -->
 
-Finally run
+We have made a common conda environment for everyone in the class to use. Creating the conda environment is one of the long steps in the chipyard build process. This avoids every person having to create their own. 
 
 ```sh
-./build-setup.sh riscv-tools -s 6 -s 7 -s 8 -s 9
+source /tools/C/ee290-sp26-2/activate-conda-env.sh
 ```
-To setup and build chipyard.
+
+Finally, run:
+
+```sh
+./build-setup.sh riscv-tools --use-lean-conda -s 1 -s 3 -s 10
+```
+
+6) Because step 1 is skipped, build-setup.sh won't write the conda-activation block into env.sh — it'll only contain CY_DIR. Add it yourself so source env.sh works like a normal install.
+
+```sh
+./scripts/replace-content.py env.sh build-setup-conda "$(cat <<EOF
+if ! type conda >& /dev/null; then
+    echo "::ERROR:: you must have conda in your environment first"
+    return 1
+fi
+
+source \$(conda info --base)/etc/profile.d/conda.sh
+conda activate /tools/C/ee290-sp26-2/conda-env
+source $PWD/scripts/fix-open-files.sh
+EOF
+)"
+```
 
 <!-- The `init-subodules-no-riscv-tools.sh` script will initialize and checkout all of the necessary `git submodules`. This will also validate that you are on a tagged branch, otherwise it will prompt for confirmation. When updating Chipyard to a new version, you will also want to rerun this script to update the submodules. Using git directly will try to initialize all submodules; this is not recommended unless you expressly desire this behavior.
 
@@ -250,7 +261,7 @@ source ./env.sh
 
 An `env.sh` file should exist in the top-level repository (`$chipyard`). This file sets up necessary environment variables such as `PATH` for the current Chipyard repository. This is required by future Chipyard steps such as the `make` system to function correctly.
 
-Over the course of the semester, we will find ourselves working with different Chipyards, such as one for this lab, and one for the SoCs we build this semester.
+Over the course of the semester, we will find ourselves working with two different Chipyards, one for this lab, and one for the SoC rest of our bringup work. For installing any new chipyards follow the same steps outlined in this lab. 
 
 <!--- An `env.sh` file should exist in the top-level repository (`$chipyard`). This file sets up necessary environment variables such as needed for future Chipyard steps (needed for the `make` system to work properly). Once the script is run, the `PATH`, `RISCV`, and `LD_LIBRARY_PATH` environment variables will be set properly for the toolchain requested. -->
 
@@ -264,7 +275,7 @@ export chipyard=/tools/C/$USER/ee194-lab1
 cd $chipyard
 source ~/miniforge3/bin/activate
 source ./env.sh
-source /tools/C/ee194-sp26/bwrc-env.sh 
+source /tools/C/ee194-sp26-2/bwrc-env.sh 
 ```
 
 You can write these into a shell script or bash alias that you call upon first login to source everything you need in 1 command. Historically we've seen students sometimes run into issues logging in over NoMachine when including these commands in their `.bashrc`. Hence we recommend setting up a shell script or bash alias you run manually instead of automatically running these during log in.
@@ -565,7 +576,7 @@ Answer the following question:
 
 A simple RISC-V test can be found under `$RISCV/riscv64-unknown-elf/share/riscv-tests/isa/`and can be run in `$chipyard/sims/vcs` as:
 ```sh
-make run-binary CONFIG=RocketConfig BINARY=$RISCV/riscv64-unknown-elf/share/riscv-tests/isa/rv64ui-p-simple
+make run-binary CONFIG=RocketConfig LOADMEM=1 BINARY=$RISCV/riscv64-unknown-elf/share/riscv-tests/isa/rv64ui-p-simple
 ```
 
 This runs the RISC-V binary `rv64ui-p-simple` on the RTL defined by the Chipyard Config `RocketConfig`.
@@ -578,7 +589,7 @@ This runs the RISC-V binary `rv64ui-p-simple` on the RTL defined by the Chipyard
 
 In summary, when we run something like:
 ```sh
-make run-binary CONFIG=RocketConfig BINARY=$RISCV/riscv64-unknown-elf/share/riscv-tests/isa/rv64ui-p-simple
+make run-binary CONFIG=RocketConfig LOADMEM=1 BINARY=$RISCV/riscv64-unknown-elf/share/riscv-tests/isa/rv64ui-p-simple
 ```
 The first part of the command (`CONFIG=RocketConfig`) will elaborate the design and create SystemVerilog/Verilog.
 
@@ -783,7 +794,7 @@ Chipyard provides the infrastructure to help you further simulate, verify & impl
 
 
 
-# Designing a Custom Accelerator
+# OPTIONAL (not required for bringup class): Designing a Custom Accelerator
 The idea here is to learn how to incorporate a custom RoCC accelerator in an SoC by writing an accelerator generator and effectively utilizing the simplicity and extensibility of Chipyard. This accelerator will involve a decent amount of Chisel. We recognize that not everyone taking the course will be interested in writing RTL, but even if you do not plan to be on the RTL team, being able to read RTL in Chisel that is being used in Chipyard will be critical.
   * Ex: The verification team will likely need to read chip's RTL to figure out how to test effectively, what the interfaces, etc. look like... When something breaks, determine which RTL team to go talk to.
   * The PD team will need to understand chip level IO, which modules talk to which other module in order to determine floorplanning, which modules have RTL elements that can result in physical design inefficiencies (large queues resulting in register banks, large shifters, etc). 
@@ -857,7 +868,14 @@ Note: A hardware architecture specification is not a microarchitecture specifica
 
 # Setting up the Bringup Chipyard
 
-Congratulations, you have finished all the technical tasks of the lab. As a final task, please make sure to make a new fresh clone of [this chipyard version](git@github.com:ucb-ee194-tapeout/chipyard.git). It has a link to the accelerator RTL that was taped out in Spring 2026. Follow all the same setup instructions detailed above. All our work this semester is going to on this chipyard. 
+Congratulations, you have finished all the technical tasks of the lab. As a final task, please make sure to make a new fresh clone of this chipyard lab.
+
+```sh
+cd /tools/C/$USER/ # or /scratch/$USER
+git clone git@github.com:ucb-ee194-tapeout/chipyard-lab.git bringup-chipyard
+```
+
+Follow all the same setup instructions detailed above. All our work this semester is going to on this chipyard. 
 
 Deliverable: submit a BWRC server filepath to this chipyard after the build setup script finished successfully.
 
