@@ -481,7 +481,7 @@ All of these modules are built as generators (a core driving point of using Chis
 
 
 ### Exercise: Interpreting a Config
-**For all of the exercises in this lab, please submit your answers / follow along on [this](https://docs.google.com/forms/d/e/1FAIpQLSdspF3BokclVfJS6Kb3O6AsCOMB1cHBsMHn8NRQitP4Qxykmg/viewform) Google Form.**
+**For all of the exercises in this lab, please submit your answers / follow along on the respective Gradescope Assignment.**
 
 Chipyard Configs describe what goes into our final system and what paramters our designs are elaborated with. You can find the configs in `$chipyard/generators/chipyard/src/main/scala/config`.
 
