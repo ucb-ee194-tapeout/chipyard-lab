@@ -16,6 +16,12 @@ class DualRocketConfig extends Config(
   new freechips.rocketchip.rocket.WithNHugeCores(2) ++
   new chipyard.config.AbstractConfig)
 
+class MysteryRocketConfig extends Config(
+  new chipyard.example.WithGCD(useAXI4=false, useBlackBox=false) ++
+  new chipyard.config.WithRocketDCacheScratchpad ++
+  new freechips.rocketchip.rocket.WithNBigCores(1) ++
+  new chipyard.config.AbstractConfig)
+
 class TinyRocketConfig extends Config(
   new testchipip.soc.WithNoScratchpads ++                         // All memory is the Rocket TCMs
   new freechips.rocketchip.subsystem.WithIncoherentBusTopology ++ // use incoherent bus topology
