@@ -1,6 +1,3 @@
-[submodule "fpga/fpga-shells"]
-	path = fpga/fpga-shells
-	url = https://github.com/chipsalliance/rocket-chip-fpga-shells.git
 [submodule "generators/bar-fetchers"]
 	path = generators/bar-fetchers
 	url = https://github.com/ucb-bar/bar-fetchers.git
@@ -169,3 +166,6 @@
 [submodule "generators/saturn"]
 	path = generators/saturn
 	url = git@github.com:ucb-ee194-tapeout/saturn-vectors.git
+[submodule "fpga/fpga-shells"]
+	path = fpga/fpga-shells
+	url = git@github.com:doihead/rocket-chip-fpga-shells.git

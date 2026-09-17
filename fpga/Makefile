@@ -100,6 +100,20 @@ ifeq ($(SUB_PROJECT),datastorm)
 	FPGA_BRAND        ?= altera
 endif
 
+ifeq ($(SUB_PROJECT),sophialake)
+	SBT_PROJECT       ?= chipyard_fpga
+	MODEL             ?= SophiaLakeHarness
+	VLOG_MODEL        ?= SophiaLakeHarness
+	MODEL_PACKAGE     ?= chipyard.fpga.sophialake
+	CONFIG            ?= SophiaLakeDSP25Config
+	CONFIG_PACKAGE    ?= chipyard.fpga.sophialake
+	GENERATOR_PACKAGE ?= chipyard
+	TB                ?= none # unused
+	TOP               ?= ChipTop
+	BOARD             ?= sophialake
+	FPGA_BRAND        ?= xilinx
+endif
+
 export USE_CHISEL6=1
 
 include $(base_dir)/variables.mk
