@@ -438,9 +438,25 @@ Finally, upload this bistream to the SophiaLake fpga. Connect to it using USB-C 
 
 **Q23.** Briefly describe the steps to program a bitstream onto an FPGA, naming the tabs and buttons you click. Pick either Vivado or Quartus Prime. Assume the FPGA is already auto-connected.
 
+## Adding an ILA
+
+An Integrated Logic Analyzer allows us to probe signals even after the FPGA is programmed, so we can access signals while you have a program running. We will add an ILA to track the PC when we run a `hello.riscv` binary. However, you can set up the ILA to track other signals, but keep in mind you will need to rebuild the bitstream if you do so.
+
+Click on the `IP Catalog` section, search for ILA (Integrated Logic Analyzer), and double click it. In the General Options, change the Sample Data Depth to 4096. Under the Probe Ports tab, change the width to 32, then click OK. Click Generate.
+
+Instantiate the ILA in the .sv file with the program counter, which can be found in `generated-src/<config>/gen-collateral/`. Then rebuild the bitstream. 
+
+To build the `hello.riscv` binary, follow the instructions [here](https://github.com/ucb-ee194-tapeout/chipyard-lab/tree/main/tests#readme). Load the bitstream onto the FPGA. Then navigate to the `/software/baremetal-ide/` directory. 
+
+Find which port you are using: Unfortunately, due to the way Unix handles serial devices, the exact device ID changes every time you unplug and replug your device. The best way of figuring out which serial port is which is to unplug the device you are trying to find the id of, run the command `ls /dev/ttyUSB*` to list out all remaining USB serial ports, plug the device in again, and run the command one last time to find the new serial port. For the lab, UART-TSI is on the usb port hooked directly up to the FPGA, not the one plugged into the FT-LINK.
+
+Before you run anything, make sure to start the ILA so that it will record the probing. Then run `uart_tsi +tty=<YOUR_TTY_PATH> +baudrate=921600 <path to hello.riscv>`. You should expect to see a hello message! 
+
+**Q24.** Submit a picture of the values captured by the ILA. 
+
 ## Deliverables
 
 - Your answers to all the questions
 - In person checkoff for the SophiaLake bitstream uploaded to the SophiaLake board. 
 
-Congratulations, you have finished the FPGA lab! Make sure to get checked off. Do NOT delete your SophiaLake Rocket bitstream from the last section. We will use it for next lab. 
+Congratulations, you have finished the FPGA lab! Make sure to get checked off. Do NOT delete your SophiaLake Rocket b:itstream from the last section. We will use it for next lab. 
