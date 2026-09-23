@@ -275,7 +275,7 @@ export chipyard=/tools/C/$USER/ee194-lab1
 cd $chipyard
 source ~/miniforge3/bin/activate
 source ./env.sh
-source /tools/C/ee194-sp26-2/bwrc-env.sh 
+source /tools/C/ee194-sp26/bwrc-env.sh 
 ```
 
 You can write these into a shell script or bash alias that you call upon first login to source everything you need in 1 command. Historically we've seen students sometimes run into issues logging in over NoMachine when including these commands in their `.bashrc`. Hence we recommend setting up a shell script or bash alias you run manually instead of automatically running these during log in.
