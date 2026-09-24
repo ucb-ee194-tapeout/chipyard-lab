@@ -279,7 +279,7 @@ export chipyard=/tools/C/$USER/ee194-lab1
 cd $chipyard
 source ~/miniforge3/bin/activate
 source ./env.sh
-source /tools/C/ee194-sp26-2/bwrc-env.sh 
+source /tools/C/ee194-sp26/bwrc-env.sh 
 ```
 
 **On EDA machines**, use these instead:
