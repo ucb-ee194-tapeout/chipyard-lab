@@ -1,6 +1,9 @@
 # EE194 Lab 1 -- BWRC Compute & Chipyard
 You will need your EECS account information for this lab. You should've received an email from EECS IRIS with your @eecs.berkeley.edu account. This is your EECS account/LDAP account. Before you start this lab, follow the instructions in that email to set the password for your account.
 
+> [!NOTE]
+> This lab can be completed on either the **BWRC** compute cluster or the EECS instructional **EDA machines** (`eda-*.eecs.berkeley.edu`). Wherever the instructions differ, look for the **On EDA machines** notes. See [EDA Machines](#eda-machines) for an overview.
+
 ## Tour of BWRC Compute
 The [Berkeley Wireless Research Center (BWRC)](https://bwrc.eecs.berkeley.edu/) has its own set of machines that we will be using for all future tapeout work. The BWRC compute cluster is a set of machines designed for high intensity compute, and is an active research cluster shared with the lab's graduate student researchers.
 
@@ -74,6 +77,23 @@ Advice:
   * Address > Host: `bwrcrdsl-1.eecs.berkeley.edu` -- Only `bwrcrdsl-1` seems to support remote desktop.
   * Configuration > "Use key-based authentication with a key you provide" - Provide the path to your private SSH key.
 
+## EDA Machines
+If you are using the EECS instructional EDA machines instead of BWRC, the following applies.
+
+### Compute Servers
+```
+eda-{1,2,3,...}.eecs.berkeley.edu
+```
+* There are no separate login/jump servers -- you SSH directly into an `eda-*` machine (if you are off campus, you may need to be on the Berkeley VPN). Chipyard setup & runs, EDA tool runs, and VSCode connections all happen on these machines.
+* These machines are shared by many students across multiple classes. Before starting a large job, check how loaded the machine is (ex: with `htop`), and move to a different `eda-*` machine if it is already heavily loaded. Kill any jobs you are no longer using.
+
+### File System
+* Home Folder: `~`
+  * Same rules as BWRC: **no large files here.** Your home folder has a small quota, and Chipyard alone is many GBs.
+* Scratch Space: `/scratch`
+  * `/scratch` is local to each machine -- **your files in `/scratch` on `eda-1` will not be visible from `eda-2`.** Always log in to the same machine you set up Chipyard on.
+  * Scratch is not backed up, so check your work into Git often.
+
 
 ## Setup your environment
 You should know how to do this at this point; so we won't go into too much detail, but here is a checklist of things you might want to do:
@@ -97,7 +117,16 @@ You should know how to do this at this point; so we won't go into too much detai
       ForwardX11Trusted yes
     ```
   * Then when you connect via VSCode, just type `bwrcix-1` in the window that comes up, it'll automatically use the ssh config above. - To confirm, after connecting, open the integrated terminal and type `hostname` -- make sure this says `bwrcix-1.eecs.berkeley.edu`
-* Generate an SSH key on bwrc machines, add it to GitHub & GitLab so you can clone using ssh.
+  * **On EDA machines:** no jump server is needed. Use this SSH config instead, then connect VSCode to `eda-1` (or whichever machine you picked):
+    ```sh
+    Host eda-?
+      HostName %h.eecs.berkeley.edu
+      Port 22
+      User <>
+      ServerAliveInterval 60
+      ForwardX11Trusted yes
+    ```
+* Generate an SSH key on bwrc machines (or the EDA machines), add it to GitHub & GitLab so you can clone using ssh.
 * Configure your local git config -- Example:
   ```
   git config --global user.name "Mona Lisa"
@@ -142,6 +171,8 @@ and cd into this folder.
 cd /tools/C/$USER
 ```
 
+> **On EDA machines:** there is no `/tools/C`. Use `/scratch/$USER` instead (`mkdir -p /scratch/$USER && cd /scratch/$USER`), and replace all instances of `/tools/C/$USER` below with `/scratch/$USER`.
+
 If you run into any issues, please contact course staff. <b>DO NOT</b> work out of the home directory `~`.
 
 
@@ -163,6 +194,8 @@ source /tools/C/ee194-sp26/bwrc-env.sh # this sources /tools/flexlm/flexlm.sh fo
 This script is responsible for setting up the tools and environment used in this lab (and more generally by the course). You should vim into the file to see what it does.
 
 **You will need to source this script in every new terminal & at the start of every work session, or put this in your bashrc or zshrc**
+
+> **On EDA machines:** `bwrc-env.sh` does not exist there, so skip this step. The rest of the setup is the same.
 
 2) Clone the lab chipyard repo: [git@github.com:ucb-ee194-tapeout/chipyard-lab.git](git@github.com:ucb-ee194-tapeout/chipyard-lab.git).
 ```sh
@@ -209,39 +242,10 @@ conda install -n base conda-lock==1.4.0
 conda activate base
 ```
 
-<!-- 6) Run
-```
-conda activate /tools/C/ee290-sp25/chipyard/.conda-env/
-```
-
-This command, in Chipyard, uses the Conda package manager to help manage system dependencies. Conda creates a virtual environment that holds system dependencies like `make`, `gcc`, etc. We've also installed a pre-built RISC-V toolchain into it. We want to ensure that everyone in the class is using the same version of everything, so everyone will be using the same conda environment by activating the environment specified above. <b>You will need to do this in every new terminal & at the start of every work session.</b> -->
-
-We have made a common conda environment for everyone in the class to use. Creating the conda environment is one of the long steps in the chipyard build process. This avoids every person having to create their own. 
+6) Run the full Chipyard build setup. This creates your own conda environment inside the repo (`$chipyard/.conda-env`), installs the RISC-V toolchain into it, and writes an `env.sh` that activates everything. This is the longest step (it can take well over 30 minutes), so make sure you are in tmux.
 
 ```sh
-source /tools/C/ee290-sp26-2/activate-conda-env.sh
-```
-
-Finally, run:
-
-```sh
-./build-setup.sh riscv-tools --use-lean-conda -s 1 -s 3 -s 10
-```
-
-6) Because step 1 is skipped, build-setup.sh won't write the conda-activation block into env.sh — it'll only contain CY_DIR. Add it yourself so source env.sh works like a normal install.
-
-```sh
-./scripts/replace-content.py env.sh build-setup-conda "$(cat <<EOF
-if ! type conda >& /dev/null; then
-    echo "::ERROR:: you must have conda in your environment first"
-    return 1
-fi
-
-source \$(conda info --base)/etc/profile.d/conda.sh
-conda activate /tools/C/ee290-sp26-2/conda-env
-source $PWD/scripts/fix-open-files.sh
-EOF
-)"
+./build-setup.sh riscv-tools --use-lean-conda
 ```
 
 <!-- The `init-subodules-no-riscv-tools.sh` script will initialize and checkout all of the necessary `git submodules`. This will also validate that you are on a tagged branch, otherwise it will prompt for confirmation. When updating Chipyard to a new version, you will also want to rerun this script to update the submodules. Using git directly will try to initialize all submodules; this is not recommended unless you expressly desire this behavior.
@@ -276,6 +280,14 @@ cd $chipyard
 source ~/miniforge3/bin/activate
 source ./env.sh
 source /tools/C/ee194-sp26-2/bwrc-env.sh 
+```
+
+**On EDA machines**, use these instead:
+```sh
+export chipyard=/scratch/$USER/ee194-lab1
+cd $chipyard
+source ~/miniforge3/bin/activate
+source ./env.sh
 ```
 
 You can write these into a shell script or bash alias that you call upon first login to source everything you need in 1 command. Historically we've seen students sometimes run into issues logging in over NoMachine when including these commands in their `.bashrc`. Hence we recommend setting up a shell script or bash alias you run manually instead of automatically running these during log in.
@@ -553,7 +565,7 @@ Inspect `MysteryRocketConfig` & answer the following questions. You should be ab
 
 ## Exercise: Compiling a Config 
 
-Let's run some commands! **MAKE SURE YOU RUN THESE ON THE BWRCIX-\* MACHINES**.
+Let's run some commands! **MAKE SURE YOU RUN THESE ON THE BWRCIX-\* MACHINES (OR AN EDA-\* MACHINE)**.
 
 We'll be running the `CONFIG=RocketConfig` config (the `-j32` executes the run with more threads). This compiles the Chipyard configuration we saw above, converting Rocket Core's Chisel RTL into Verilog (Remember when we talked about how this happens in lab 0 part 0? Hint: FIRRTL)... Run:
 ```sh
@@ -561,6 +573,12 @@ cd $chipyard/sims/vcs
 make -j32 CONFIG=RocketConfig
 ```
 > *Notes: [error] `Picked up JAVA_TOOL_OPTIONS: -Xmx8G -Xss8M -Djava.io.tmpdir=` is not a real error. You can safely ignore it.*
+
+> **On EDA machines:** use the open-source [Verilator](https://www.veripool.org/verilator/) simulator instead of VCS, so you don't have to deal with EDA tool licenses. Everywhere this lab says `sims/vcs`, use `sims/verilator` instead -- the `make` commands and directory structure (`generated-src/`, `output/`) are the same:
+> ```sh
+> cd $chipyard/sims/verilator
+> make -j32 CONFIG=RocketConfig
+> ```
 
 After the run is done, check the `$chipyard/sims/vcs/generated-src/` folder. Find the directory of the config (`chipyard.harness.TestHarness.<CONFIG>`) that you ran and you should see the following files under `/gen-collateral` in that directory:
 - `ChipTop.sv`: Synthesizable Verilog source
@@ -595,11 +613,11 @@ The first part of the command (`CONFIG=RocketConfig`) will elaborate the design 
 
 This is done by converting the Chisel code, embedded in Scala, into a FIRRTL intermediate representation which is then run through the FIRRTL compiler to generate Verilog (for more details, see lab 0).
 
-Next, it will run VCS (hence the `sims/vcs` folder) to build a simulator out of the generated Verilog that can run RISC-V binaries.
+Next, it will run VCS (hence the `sims/vcs` folder) to build a simulator out of the generated Verilog that can run RISC-V binaries. (On EDA machines, Verilator does the same thing from `sims/verilator`.)
 
 The second part of the command (`BINARY=...`) will run the test specified by `BINARY` and output results as an `.out` file.
 
-This file will be emitted to the `$chipyard/sims/vcs/output/` directory.
+This file will be emitted to the `$chipyard/sims/vcs/output/` directory (`$chipyard/sims/verilator/output/` on EDA machines).
 
 Many Chipyard/Chisel-based designs look like a Rocket core connected to some kind of "accelerator" (e.g. a DSP block like an FFT module).
 
@@ -741,6 +759,11 @@ When running, make sure you are in `$chipyard/sims/vcs`, then run:
 make -j32 CONFIG=PackBitsConfig BINARY=../../generators/packbits-acc/baremetal-test/TestPackBitsDecompHello.riscv run-binary-debug SIM_FLAGS="-debug_accss+all"
 ```
 
+> **On EDA machines:** run this from `$chipyard/sims/verilator` instead, without the VCS-specific `SIM_FLAGS`. `USE_FST=1` makes Verilator write an FST waveform, which is smaller than the default VCD:
+> ```sh
+> make -j32 CONFIG=PackBitsConfig BINARY=../../generators/packbits-acc/baremetal-test/TestPackBitsDecompHello.riscv run-binary-debug USE_FST=1
+> ```
+
 It might take a few minutes to build and compile the test harness, and run the simulation.
 
 Inside, `$chipyard/sims/vcs`, for each config,
@@ -749,6 +772,8 @@ Inside, `$chipyard/sims/vcs`, for each config,
 
 **Waveforms:**
 Use `verdi -ssf <fsdb file>`. Synopsys has transitioned to a new waveform viewer called Verdi that is much more capable than DVE. Verdi uses an open file format called *fsdb* (Fast Signal Database), and hence VCS has been set up to output simulation waveforms in fsdb.
+
+> **On EDA machines:** Verdi needs a Synopsys license, so open the Verilator waveform with the open-source `gtkwave` instead: `gtkwave <fst file>` (the file is under `$chipyard/sims/verilator/output/`). Use the SST panel on the left to follow the same module hierarchy shown below.
 
 In the bottom pane of your Verdi window, navigate to `Signal > Get Signals...`. Follow the module hierarchy to the correct module.
 ```
@@ -877,7 +902,7 @@ git clone git@github.com:ucb-ee194-tapeout/chipyard-lab.git bringup-chipyard
 
 Follow all the same setup instructions detailed above. All our work this semester is going to on this chipyard. 
 
-Deliverable: submit a BWRC server filepath to this chipyard after the build setup script finished successfully.
+Deliverable: submit a BWRC server filepath to this chipyard after the build setup script finished successfully. If you are on the EDA machines, you do not need to submit this deliverable, **but you still need to do this setup** -- all of the class tasks later in the semester are done on this chipyard, so you won't be able to continue without it.
 
 
 
